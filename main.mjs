@@ -8,31 +8,54 @@ import express from 'express';
 // .envファイルから環境変数を読み込み
 dotenv.config();
 
+// ===== 合言葉とロール名を設定 =====
+const SECRET_KEYWORD = "apple123"; // 合言葉
+const ROLE_NAME = "異世界1"; // 付与するロール名
+
 // Discord Botクライアントを作成
 const client = new Client({
     intents: [
-        GatewayIntentBits.Guilds,           // サーバー情報取得
-        GatewayIntentBits.GuildMessages,    // メッセージ取得
-        GatewayIntentBits.MessageContent,   // メッセージ内容取得
-        GatewayIntentBits.GuildMembers,     // メンバー情報取得
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
     ],
 });
 
-// Botが起動完了したときの処理
+// Botが起動完了したとき
 client.once('ready', () => {
     console.log(`🎉 ${client.user.tag} が正常に起動しました！`);
     console.log(`📊 ${client.guilds.cache.size} つのサーバーに参加中`);
 });
 
-// メッセージが送信されたときの処理
-client.on('messageCreate', (message) => {
-    // Bot自身のメッセージは無視
-    if (message.author.bot) return;
-    
-    // 「ping」メッセージに反応
+// メッセージが送信されたとき
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return; // Bot自身は無視
+
+    // ping応答（テスト用）
     if (message.content.toLowerCase() === 'ping') {
         message.reply('🏓 pong!');
-        console.log(`📝 ${message.author.tag} が ping コマンドを使用`);
+        return;
+    }
+
+    // ===== 合言葉判定 =====
+    if (message.content.trim() === SECRET_KEYWORD) {
+        const guild = message.guild;
+        const role = guild.roles.cache.find(r => r.name === ROLE_NAME);
+
+        if (!role) {
+            await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
+            return;
+        }
+
+        try {
+            await message.member.roles.add(role);
+            await message.reply(`✅ ${ROLE_NAME} ロールを付与しました！`);
+            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME} を付与`);
+        } catch (err) {
+            console.error(`❌ ロール付与エラー:`, err);
+            await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
+        }
     }
 });
 
@@ -41,14 +64,14 @@ client.on('error', (error) => {
     console.error('❌ Discord クライアントエラー:', error);
 });
 
-// プロセス終了時の処理
+// プロセス終了時
 process.on('SIGINT', () => {
     console.log('🛑 Botを終了しています...');
     client.destroy();
     process.exit(0);
 });
 
-// Discord にログイン
+// Discord ログイン
 if (!process.env.DISCORD_TOKEN) {
     console.error('❌ DISCORD_TOKEN が .env ファイルに設定されていません！');
     process.exit(1);
@@ -61,11 +84,9 @@ client.login(process.env.DISCORD_TOKEN)
         process.exit(1);
     });
 
-// Express Webサーバーの設定（Render用）
+// Express Webサーバー（Render用）
 const app = express();
 const port = process.env.PORT || 3000;
-
-// ヘルスチェック用エンドポイント
 app.get('/', (req, res) => {
     res.json({
         status: 'Bot is running! 🤖',
@@ -73,8 +94,6 @@ app.get('/', (req, res) => {
         timestamp: new Date().toISOString()
     });
 });
-
-// サーバー起動
 app.listen(port, () => {
     console.log(`🌐 Web サーバーがポート ${port} で起動しました`);
 });
