@@ -64,18 +64,16 @@ client.on('messageCreate', async (message) => {
         if (message.content.trim() === KORNN_WORD1 || message.content.trim() === KORNN_WORD2) {
         if (message.author.bot) return; // Bot自身は無視
 
-        if (message.content.toLowerCase() === 'ping') {
-            var random = Math.floor( Math.random() * 2 );
-            if (random === 0){
-                message.reply('とうもろこしです');
-            }else if(random === 1){
-                message.reply('こーんです');
-            }else if(random === 2){
-                message.reply('なんでしょうか？');
-            }
-            return;
-    }
-    }
+        var random = Math.floor( Math.random() * 3 );
+        if (random === 0){
+            message.reply('とうもろこしです');
+        }else if(random === 1){
+            message.reply('こーんです');
+         }else if(random === 2){
+             message.reply('なんでしょうか？');
+         }
+        return;
+        }
 
       // 指定チャンネルでのみ削除
   if (message.channel.id === TARGET_CHANNEL_ID) {
