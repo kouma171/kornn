@@ -10,7 +10,7 @@ dotenv.config();
 
 // ===== 合言葉とロール名を設定 =====
 const SECRET_KEYWORD = "apple123"; // 合言葉
-const KORNN_WORD1 = "とうもろこし";
+const KORNN_WORD1 = 'とうもろこし';
 const ROLE_NAME = "異世界1"; // 付与するロール名
 const TARGET_CHANNEL_ID = "1327169018464960606"; // 対象チャンネルのID
 
@@ -34,9 +34,6 @@ client.once('ready', () => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return; // Bot自身は無視
 
-        // 一度処理したメッセージはスキップ
-    if (processedMessages.has(message.id)) return;
-    processedMessages.add(message.id);
 
     // ping応答（テスト用）
     if (message.content.toLowerCase() === 'ping') {
