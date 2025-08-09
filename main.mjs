@@ -85,6 +85,26 @@ client.on('messageCreate', async (message) => {
     
 });
 
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return;
+
+    // コマンドチェック: "!roulette"
+    if (message.content.toLowerCase().startsWith('!roulette')) {
+        // スペースで区切って配列化（最初はコマンドなので除く）
+        const args = message.content.trim().split(/\s+/).slice(1);
+
+        if (args.length === 0) {
+            await message.reply('!roulette りんご みかん バナナ');
+            return;
+        }
+
+        // ランダム選択
+        const choice = args[Math.floor(Math.random() * args.length)];
+
+        await message.reply(`🎉 ルーレットの結果は… **${choice}** です！`);
+    }
+});
+
 // エラーハンドリング
 client.on('error', (error) => {
     console.error('❌ Discord クライアントエラー:', error);
