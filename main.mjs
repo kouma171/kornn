@@ -4,6 +4,13 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
 import express from 'express';
+import fs from 'fs';
+import {
+    joinVoiceChannel,
+    createAudioPlayer,
+    createAudioResource,
+    AudioPlayerStatus
+} from '@discordjs/voice';
 
 // .envファイルから環境変数を読み込み
 dotenv.config();
@@ -13,6 +20,8 @@ const SECRET_KEYWORD = "apple123"; // 合言葉
 const KORNN_WORD1 = 'とうもろこし';
 const ROLE_NAME = "異世界1"; // 付与するロール名
 const TARGET_CHANNEL_ID = "1327169018464960606"; // 対象チャンネルのID
+const FILE_PATH = './sound.mp3';
+const timeFile = './times.json';
 
 // Discord Botクライアントを作成
 const client = new Client({
@@ -33,13 +42,6 @@ client.once('ready', () => {
 // メッセージが送信されたとき
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return; // Bot自身は無視
-
-
-    // ping応答（テスト用）
-    if (message.content.toLowerCase() === 'ping') {
-        message.reply('🏓 pong!');
-        return;
-    }
 
     // ===== 合言葉判定 =====
     if (message.content.trim() === SECRET_KEYWORD) {
@@ -62,7 +64,7 @@ client.on('messageCreate', async (message) => {
     }
 
     //特定の言葉に反応
-        if (message.content.toLowerCase() === KORNN_WORD1) {
+    if (message.content.toLowerCase() === KORNN_WORD1) {
 
         var random = Math.floor( Math.random() * 3 );
         if (random === 0){
@@ -94,16 +96,103 @@ client.on('messageCreate', async (message) => {
         const args = message.content.trim().split(/\s+/).slice(1);
 
         if (args.length === 0) {
-            await message.reply('りんご みかん バナナ');
+            await message.reply('例:りんご みかん バナナ');
             return;
         }
 
         // ランダム選択
         const choice = args[Math.floor(Math.random() * args.length)];
 
-        await message.reply(`🎉 ルーレットの結果は… **${choice}** です！`);
+        await message.reply(`ルーレットの結果は… **${choice}** です！🎉`);
+    }
+
+    // コマンドチェック: "!slot"
+    if (message.content.toLowerCase().startsWith('!slot')) {
+    // 外れパターンの数字リスト（777以外）
+    const missNumbers = ['767', '772', '773', '210', '414', '778', '776'];
+
+    // 1/10の確率で当たり
+    const isWin = Math.floor(Math.random() * 10) === 0;
+
+    if (isWin) {
+        await message.reply(`おめでとう！！！ **777** です！🎉`);
+    } else {
+        const miss = missNumbers[Math.floor(Math.random() * missNumbers.length)];
+        await message.reply(`残念💦 **${miss}** です`);
+    }
     }
 });
+
+// 設定ファイル読み込み
+let alarmSettings = {};
+if (fs.existsSync(timeFile)) {
+    alarmSettings = JSON.parse(fs.readFileSync(timeFile));
+}
+
+// コマンドで時間とVCを設定
+client.on('messageCreate', (message) => {
+    if (message.author.bot) return;
+
+    if (message.content.startsWith('!settime')) {
+        const parts = message.content.split(' ');
+        if (parts.length < 3) {
+            return message.reply('時間とVCを `!settime HH:MM #VC名` の形式で指定してください');
+        }
+
+        const time = parts[1];
+        if (!/^\d{1,2}:\d{2}$/.test(time)) {
+            return message.reply('時間は HH:MM 形式で指定してください');
+        }
+
+        const channelMention = message.mentions.channels.first();
+        if (!channelMention || channelMention.type !== 2) { // 2 = ボイスチャンネル
+            return message.reply('有効なボイスチャンネルをメンションしてください');
+        }
+
+        // ギルドごとに保存
+        alarmSettings[message.guild.id] = {
+            time: time,
+            channelId: channelMention.id
+        };
+        fs.writeFileSync(timeFile, JSON.stringify(alarmSettings));
+
+        message.reply(`🔔 アラームを **${time}** に **${channelMention.name}** で鳴らすよう設定しました`);
+    }
+});
+
+// 時間監視（1分ごと）
+setInterval(async () => {
+    const now = new Date();
+    const hour = String(now.getHours()).padStart(2, '0');
+    const minute = String(now.getMinutes()).padStart(2, '0');
+    const currentTime = `${hour}:${minute}`;
+
+    for (const [guildId, { time, channelId }] of Object.entries(alarmSettings)) {
+        if (time === currentTime) {
+            try {
+                const channel = await client.channels.fetch(channelId);
+                const connection = joinVoiceChannel({
+                    channelId: channelId,
+                    guildId: guildId,
+                    adapterCreator: channel.guild.voiceAdapterCreator,
+                });
+
+                const player = createAudioPlayer();
+                const resource = createAudioResource(fs.createReadStream(FILE_PATH));
+                player.play(resource);
+                connection.subscribe(player);
+
+                player.on(AudioPlayerStatus.Idle, () => {
+                    connection.destroy();
+                });
+
+                console.log(`🎵 ${time} に ${channel.name} で音を再生しました`);
+            } catch (err) {
+                console.error("再生エラー:", err);
+            }
+        }
+    }
+}, 60 * 1000);
 
 // エラーハンドリング
 client.on('error', (error) => {
