@@ -94,7 +94,7 @@ client.on('messageCreate', async (message) => {
         const args = message.content.trim().split(/\s+/).slice(1);
 
         if (args.length === 0) {
-            await message.reply('!roulette りんご みかん バナナ');
+            await message.reply('りんご みかん バナナ');
             return;
         }
 
