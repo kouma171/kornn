@@ -10,6 +10,7 @@ dotenv.config();
 
 // ===== 合言葉とロール名を設定 =====
 const SECRET_KEYWORD = "apple123"; // 合言葉
+const KORNN_WORD1 = "とうもろこし"; const KORNN_WORD2 = "🌽";
 const ROLE_NAME = "異世界1"; // 付与するロール名
 const TARGET_CHANNEL_ID = "1327169018464960606"; // 対象チャンネルのID
 
@@ -57,6 +58,23 @@ client.on('messageCreate', async (message) => {
             console.error(`❌ ロール付与エラー:`, err);
             await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
         }
+    }
+
+    //特定の言葉に反応
+        if (message.content.trim() === KORNN_WORD1 || message.content.trim() === KORNN_WORD2) {
+        if (message.author.bot) return; // Bot自身は無視
+
+        if (message.content.toLowerCase() === 'ping') {
+            var random = Math.floor( Math.random() * 2 );
+            if (random === 0){
+                message.reply('とうもろこしです');
+            }elif(random === 1);{
+                message.reply('こーんです');
+            }elif(random === 2);{
+                message.reply('なんでしょうか？');
+            }
+            return;
+    }
     }
 
       // 指定チャンネルでのみ削除
