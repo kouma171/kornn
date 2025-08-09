@@ -68,9 +68,9 @@ client.on('messageCreate', async (message) => {
             var random = Math.floor( Math.random() * 2 );
             if (random === 0){
                 message.reply('とうもろこしです');
-            }elif(random === 1);{
+            }else if(random === 1){
                 message.reply('こーんです');
-            }elif(random === 2);{
+            }else if(random === 2){
                 message.reply('なんでしょうか？');
             }
             return;
