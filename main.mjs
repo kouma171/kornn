@@ -61,7 +61,7 @@ client.on('messageCreate', async (message) => {
     }
 
     //特定の言葉に反応
-        if (message.content.trim() === KORNN_WORD1 || message.content.trim() === KORNN_WORD2) {
+        if (message.content.toLowerCase() === KORNN_WORD1 || message.content.toLowerCase() === KORNN_WORD2) {
         if (message.author.bot) return; // Bot自身は無視
 
         var random = Math.floor( Math.random() * 3 );
