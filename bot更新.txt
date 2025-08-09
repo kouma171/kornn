@@ -1,0 +1,5 @@
+git add .
+
+git commit -m "?? Discord Botの基本機能を実装"
+
+git push origin main

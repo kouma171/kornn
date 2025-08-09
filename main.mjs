@@ -58,13 +58,8 @@ client.on('messageCreate', async (message) => {
             await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
         }
     }
-});
 
-client.on("messageCreate", async (message) => {
-  // BOT自身や他のBOTのメッセージは無視
-  if (message.author.bot) return;
-
-  // 指定チャンネルでのみ削除
+      // 指定チャンネルでのみ削除
   if (message.channel.id === TARGET_CHANNEL_ID) {
     try {
       await message.delete();
@@ -72,6 +67,7 @@ client.on("messageCreate", async (message) => {
       console.error("メッセージ削除失敗:", err);
     }
   }
+    
 });
 
 // エラーハンドリング
