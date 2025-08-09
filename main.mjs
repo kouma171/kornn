@@ -34,6 +34,10 @@ client.once('ready', () => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return; // Bot自身は無視
 
+        // 一度処理したメッセージはスキップ
+    if (processedMessages.has(message.id)) return;
+    processedMessages.add(message.id);
+
     // ping応答（テスト用）
     if (message.content.toLowerCase() === 'ping') {
         message.reply('🏓 pong!');
@@ -44,9 +48,6 @@ client.on('messageCreate', async (message) => {
     if (message.content.trim() === SECRET_KEYWORD) {
         const guild = message.guild;
         const role = guild.roles.cache.find(r => r.name === ROLE_NAME);
-
-        if (processedMessages.has(message.id)) return;
-        processedMessages.add(message.id);
 
         if (!role) {
             await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
