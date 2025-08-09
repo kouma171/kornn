@@ -11,6 +11,7 @@ dotenv.config();
 // ===== 合言葉とロール名を設定 =====
 const SECRET_KEYWORD = "apple123"; // 合言葉
 const ROLE_NAME = "異世界1"; // 付与するロール名
+const TARGET_CHANNEL_ID = "1327169018464960606"; // 対象チャンネルのID
 
 // Discord Botクライアントを作成
 const client = new Client({
@@ -57,6 +58,20 @@ client.on('messageCreate', async (message) => {
             await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
         }
     }
+});
+
+client.on("messageCreate", async (message) => {
+  // BOT自身や他のBOTのメッセージは無視
+  if (message.author.bot) return;
+
+  // 指定チャンネルでのみ削除
+  if (message.channel.id === TARGET_CHANNEL_ID) {
+    try {
+      await message.delete();
+    } catch (err) {
+      console.error("メッセージ削除失敗:", err);
+    }
+  }
 });
 
 // エラーハンドリング
