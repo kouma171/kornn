@@ -45,6 +45,9 @@ client.on('messageCreate', async (message) => {
         const guild = message.guild;
         const role = guild.roles.cache.find(r => r.name === ROLE_NAME);
 
+        if (processedMessages.has(message.id)) return;
+        processedMessages.add(message.id);
+
         if (!role) {
             await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
             return;
@@ -69,12 +72,11 @@ client.on('messageCreate', async (message) => {
         }else if(random === 1){
             message.reply('こーんです');
          }else if(random === 2){
-             message.reply('なんでしょうか？');
+            message.reply('なんでしょうか？');
          }
-        return;
-        }
+    }
 
-      // 指定チャンネルでのみ削除
+    // 指定チャンネルでのみ削除
   if (message.channel.id === TARGET_CHANNEL_ID) {
     try {
       await message.delete();
