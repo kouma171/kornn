@@ -10,7 +10,7 @@ dotenv.config();
 
 // ===== 合言葉とロール名を設定 =====
 const SECRET_KEYWORD = "apple123"; // 合言葉
-const KORNN_WORD1 = "とうもろこし"; const KORNN_WORD2 = "🌽";
+const KORNN_WORD1 = "とうもろこし";
 const ROLE_NAME = "異世界1"; // 付与するロール名
 const TARGET_CHANNEL_ID = "1327169018464960606"; // 対象チャンネルのID
 
@@ -65,7 +65,7 @@ client.on('messageCreate', async (message) => {
     }
 
     //特定の言葉に反応
-        if (message.content.toLowerCase() === KORNN_WORD1 || message.content.toLowerCase() === KORNN_WORD2) {
+        if (message.content.toLowerCase() === KORNN_WORD1) {
 
         var random = Math.floor( Math.random() * 3 );
         if (random === 0){
