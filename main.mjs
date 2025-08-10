@@ -12,6 +12,11 @@ import {
     AudioPlayerStatus
 } from '@discordjs/voice';
 
+import { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } from '@discordjs/voice';
+import { ChannelType } from 'discord.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 // .envファイルから環境変数を読み込み
 dotenv.config();
 
@@ -193,11 +198,6 @@ setInterval(async () => {
         }
     }
 }, 60 * 1000);
-
-import { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } from '@discordjs/voice';
-import { ChannelType } from 'discord.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 // ファイルパス取得用
 const __filename = fileURLToPath(import.meta.url);
