@@ -164,40 +164,6 @@ client.on('messageCreate', (message) => {
     }
 });
 
-// 時間監視（1分ごと）
-setInterval(async () => {
-    const now = new Date();
-    const hour = String(now.getHours()).padStart(2, '0');
-    const minute = String(now.getMinutes()).padStart(2, '0');
-    const currentTime = `${hour}:${minute}`;
-
-    for (const [guildId, { time, channelId }] of Object.entries(alarmSettings)) {
-        if (time === currentTime) {
-            try {
-                const channel = await client.channels.fetch(channelId);
-                const connection = joinVoiceChannel({
-                    channelId: channelId,
-                    guildId: guildId,
-                    adapterCreator: channel.guild.voiceAdapterCreator,
-                });
-
-                const player = createAudioPlayer();
-                const resource = createAudioResource(fs.createReadStream(FILE_PATH));
-                player.play(resource);
-                connection.subscribe(player);
-
-                player.on(AudioPlayerStatus.Idle, () => {
-                    connection.destroy();
-                });
-
-                console.log(`🎵 ${time} に ${channel.name} で音を再生しました`);
-            } catch (err) {
-                console.error("再生エラー:", err);
-            }
-        }
-    }
-}, 60 * 1000);
-
 // ファイルパス取得用
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -249,6 +215,44 @@ client.on('messageCreate', async (message) => {
         }
     }
 });
+
+setInterval(async () => {
+    const now = new Date();
+    const hour = String(now.getHours()).padStart(2, '0');
+    const minute = String(now.getMinutes()).padStart(2, '0');
+    const currentTime = `${hour}:${minute}`;
+
+    for (const [guildId, { time, channelId }] of Object.entries(alarmSettings)) {
+        if (time === currentTime) {
+            try {
+                const channel = await client.channels.fetch(channelId).catch(() => null);
+                if (!channel || channel.type !== ChannelType.GuildVoice) {
+                    console.error(`❌ VCが見つからないかボイスチャンネルではありません: ${channelId}`);
+                    continue;
+                }
+
+                const connection = joinVoiceChannel({
+                    channelId: channel.id,
+                    guildId: channel.guild.id,
+                    adapterCreator: channel.guild.voiceAdapterCreator,
+                });
+
+                const player = createAudioPlayer();
+                const resource = createAudioResource(FILE_PATH);
+                player.play(resource);
+                connection.subscribe(player);
+
+                player.on(AudioPlayerStatus.Idle, () => {
+                    connection.destroy();
+                });
+
+                console.log(`🎵 ${time} に ${channel.name} で音を再生しました`);
+            } catch (err) {
+                console.error("再生エラー:", err);
+            }
+        }
+    }
+}, 60 * 1000);
 
 // エラーハンドリング
 client.on('error', (error) => {
