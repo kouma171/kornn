@@ -24,7 +24,7 @@ const SECRET_KEYWORD = "apple123"; // 合言葉
 const KORNN_WORD1 = 'とうもろこし';
 const ROLE_NAME = "異世界1"; // 付与するロール名
 const TARGET_CHANNEL_ID = "1327169018464960606"; // 対象チャンネルのID
-const FILE_PATH = './栞葉.mp3';
+const FILE_PATH = path.join(__dirname, '栞葉.mp3');
 const timeFile = './times.json';
 
 // Discord Botクライアントを作成
@@ -34,6 +34,7 @@ const client = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildVoiceStates,
     ],
 });
 
@@ -81,20 +82,15 @@ client.on('messageCreate', async (message) => {
     }
 
     // 指定チャンネルでのみ削除
-  if (message.channel.id === TARGET_CHANNEL_ID) {
+    if (message.channel.id === TARGET_CHANNEL_ID) {
     try {
       await message.delete();
     } catch (err) {
       console.error("メッセージ削除失敗:", err);
     }
-  }
-    
-});
+    }
 
-client.on('messageCreate', async (message) => {
-    if (message.author.bot) return;
-
-    // コマンドチェック: "!roulette"
+      // コマンドチェック: "!roulette"
     if (message.content.toLowerCase().startsWith('!roulette')) {
         // スペースで区切って配列化（最初はコマンドなので除く）
         const args = message.content.trim().split(/\s+/).slice(1);
@@ -125,134 +121,8 @@ client.on('messageCreate', async (message) => {
         await message.reply(`残念💦 **${miss}** です`);
     }
     }
+    
 });
-
-// 設定ファイル読み込み
-let alarmSettings = {};
-if (fs.existsSync(timeFile)) {
-    alarmSettings = JSON.parse(fs.readFileSync(timeFile));
-}
-
-// コマンドで時間とVCを設定
-client.on('messageCreate', (message) => {
-    if (message.author.bot) return;
-
-    if (message.content.startsWith('!settime')) {
-        const parts = message.content.split(' ');
-        if (parts.length < 3) {
-            return message.reply('時間とVCを `!settime HH:MM #VC名` の形式で指定してください');
-        }
-
-        const time = parts[1];
-        if (!/^\d{1,2}:\d{2}$/.test(time)) {
-            return message.reply('時間は HH:MM 形式で指定してください');
-        }
-
-        const channelMention = message.mentions.channels.first();
-        if (!channelMention || channelMention.type !== 2) { // 2 = ボイスチャンネル
-            return message.reply('有効なボイスチャンネルをメンションしてください');
-        }
-
-        // ギルドごとに保存
-        alarmSettings[message.guild.id] = {
-            time: time,
-            channelId: channelMention.id
-        };
-        fs.writeFileSync(timeFile, JSON.stringify(alarmSettings));
-
-        message.reply(`🔔 アラームを **${time}** に **${channelMention.name}** で鳴らすよう設定しました`);
-    }
-});
-
-// ファイルパス取得用
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-client.on('messageCreate', async (message) => {
-    if (message.author.bot) return;
-
-    if (message.content.startsWith('!joinvc')) {
-        const args = message.content.split(' ').slice(1);
-        const channelName = args.join(' ');
-
-        if (!channelName) {
-            return message.reply('❌ VC名を入力してください');
-        }
-
-        // VC検索
-        const vc = message.guild.channels.cache.find(
-            c => c.name === channelName && c.type === ChannelType.GuildVoice
-        );
-
-        if (!vc) {
-            return message.reply(`❌ VC「${channelName}」が見つかりません`);
-        }
-
-        try {
-            // VCに接続
-            const connection = joinVoiceChannel({
-                channelId: vc.id,
-                guildId: vc.guild.id,
-                adapterCreator: vc.guild.voiceAdapterCreator
-            });
-
-            // 音声プレイヤー作成
-            const player = createAudioPlayer();
-            const resource = createAudioResource(path.join(__dirname, '栞葉.mp3'));
-
-            connection.subscribe(player);
-            player.play(resource);
-
-            player.on(AudioPlayerStatus.Idle, () => {
-                connection.destroy();
-                message.reply('✅ 音声再生完了、VCから退出しました');
-            });
-
-            message.reply(`✅ VC「${channelName}」に参加して音声を再生します`);
-        } catch (err) {
-            console.error('❌ VC参加エラー:', err);
-            message.reply('❌ VCに参加できませんでした');
-        }
-    }
-});
-
-setInterval(async () => {
-    const now = new Date();
-    const hour = String(now.getHours()).padStart(2, '0');
-    const minute = String(now.getMinutes()).padStart(2, '0');
-    const currentTime = `${hour}:${minute}`;
-
-    for (const [guildId, { time, channelId }] of Object.entries(alarmSettings)) {
-        if (time === currentTime) {
-            try {
-                const channel = await client.channels.fetch(channelId).catch(() => null);
-                if (!channel || channel.type !== ChannelType.GuildVoice) {
-                    console.error(`❌ VCが見つからないかボイスチャンネルではありません: ${channelId}`);
-                    continue;
-                }
-
-                const connection = joinVoiceChannel({
-                    channelId: channel.id,
-                    guildId: channel.guild.id,
-                    adapterCreator: channel.guild.voiceAdapterCreator,
-                });
-
-                const player = createAudioPlayer();
-                const resource = createAudioResource(FILE_PATH);
-                player.play(resource);
-                connection.subscribe(player);
-
-                player.on(AudioPlayerStatus.Idle, () => {
-                    connection.destroy();
-                });
-
-                console.log(`🎵 ${time} に ${channel.name} で音を再生しました`);
-            } catch (err) {
-                console.error("再生エラー:", err);
-            }
-        }
-    }
-}, 60 * 1000);
 
 // エラーハンドリング
 client.on('error', (error) => {
