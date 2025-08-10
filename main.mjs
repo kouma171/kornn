@@ -100,11 +100,6 @@ client.on('messageCreate', async (message) => {
     
 });
 
-// エラーハンドリング
-client.on('error', (error) => {
-    console.error('❌ Discord クライアントエラー:', error);
-});
-
 // プロセス終了時
 process.on('SIGINT', () => {
     console.log('🛑 Botを終了しています...');
