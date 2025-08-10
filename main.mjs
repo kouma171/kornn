@@ -232,7 +232,7 @@ client.on('messageCreate', async (message) => {
 
             // 音声プレイヤー作成
             const player = createAudioPlayer();
-            const resource = createAudioResource(path.join(__dirname, 'alarm.mp3'));
+            const resource = createAudioResource(path.join(__dirname, '栞葉.mp3'));
 
             connection.subscribe(player);
             player.play(resource);
