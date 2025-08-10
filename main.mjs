@@ -4,17 +4,6 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
 import express from 'express';
-import fs from 'fs';
-import {
-    joinVoiceChannel,
-    createAudioPlayer,
-    createAudioResource,
-    AudioPlayerStatus
-} from '@discordjs/voice';
-
-import { ChannelType } from 'discord.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 // .envファイルから環境変数を読み込み
 dotenv.config();
@@ -24,17 +13,6 @@ const SECRET_KEYWORD = "apple123"; // 合言葉
 const KORNN_WORD1 = 'とうもろこし';
 const ROLE_NAME = "異世界1"; // 付与するロール名
 const TARGET_CHANNEL_ID = "1327169018464960606"; // 対象チャンネルのID
-
-// Discord Botクライアントを作成
-const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.GuildVoiceStates,
-    ],
-});
 
 // Botが起動完了したとき
 client.once('ready', () => {
