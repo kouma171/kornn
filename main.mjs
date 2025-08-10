@@ -8,6 +8,16 @@ import express from 'express';
 // .envファイルから環境変数を読み込み
 dotenv.config();
 
+// Discord Botクライアントを作成
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,           // サーバー情報取得
+        GatewayIntentBits.GuildMessages,    // メッセージ取得
+        GatewayIntentBits.MessageContent,   // メッセージ内容取得
+        GatewayIntentBits.GuildMembers,     // メンバー情報取得
+    ],
+});
+
 // ===== 合言葉とロール名を設定 =====
 const SECRET_KEYWORD = "apple123"; // 合言葉
 const KORNN_WORD1 = 'とうもろこし';
@@ -100,14 +110,19 @@ client.on('messageCreate', async (message) => {
     
 });
 
-// プロセス終了時
+// エラーハンドリング
+client.on('error', (error) => {
+    console.error('❌ Discord クライアントエラー:', error);
+});
+
+// プロセス終了時の処理
 process.on('SIGINT', () => {
     console.log('🛑 Botを終了しています...');
     client.destroy();
     process.exit(0);
 });
 
-// Discord ログイン
+// Discord にログイン
 if (!process.env.DISCORD_TOKEN) {
     console.error('❌ DISCORD_TOKEN が .env ファイルに設定されていません！');
     process.exit(1);
@@ -120,9 +135,11 @@ client.login(process.env.DISCORD_TOKEN)
         process.exit(1);
     });
 
-// Express Webサーバー（Render用）
+// Express Webサーバーの設定（Render用）
 const app = express();
 const port = process.env.PORT || 3000;
+
+// ヘルスチェック用エンドポイント
 app.get('/', (req, res) => {
     res.json({
         status: 'Bot is running! 🤖',
@@ -130,6 +147,8 @@ app.get('/', (req, res) => {
         timestamp: new Date().toISOString()
     });
 });
+
+// サーバー起動
 app.listen(port, () => {
     console.log(`🌐 Web サーバーがポート ${port} で起動しました`);
 });
