@@ -175,12 +175,10 @@ setInterval(async () => {
         if (time === currentTime) {
             try {
                 const channel = await client.channels.fetch(channelId);
-                if (!channel || channel.type !== ChannelType.GuildVoice) return;
-
                 const connection = joinVoiceChannel({
-                    channelId: channel.id,
-                    guildId: channel.guild.id,
-                    adapterCreator: channel.guild.voiceAdapterCreator
+                    channelId: channelId,
+                    guildId: guildId,
+                    adapterCreator: channel.guild.voiceAdapterCreator,
                 });
 
                 const player = createAudioPlayer();
@@ -199,6 +197,58 @@ setInterval(async () => {
         }
     }
 }, 60 * 1000);
+
+// ファイルパス取得用
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return;
+
+    if (message.content.startsWith('!joinvc')) {
+        const args = message.content.split(' ').slice(1);
+        const channelName = args.join(' ');
+
+        if (!channelName) {
+            return message.reply('❌ VC名を入力してください');
+        }
+
+        // VC検索
+        const vc = message.guild.channels.cache.find(
+            c => c.name === channelName && c.type === ChannelType.GuildVoice
+        );
+
+        if (!vc) {
+            return message.reply(`❌ VC「${channelName}」が見つかりません`);
+        }
+
+        try {
+            // VCに接続
+            const connection = joinVoiceChannel({
+                channelId: vc.id,
+                guildId: vc.guild.id,
+                adapterCreator: vc.guild.voiceAdapterCreator
+            });
+
+            // 音声プレイヤー作成
+            const player = createAudioPlayer();
+            const resource = createAudioResource(path.join(__dirname, '栞葉.mp3'));
+
+            connection.subscribe(player);
+            player.play(resource);
+
+            player.on(AudioPlayerStatus.Idle, () => {
+                connection.destroy();
+                message.reply('✅ 音声再生完了、VCから退出しました');
+            });
+
+            message.reply(`✅ VC「${channelName}」に参加して音声を再生します`);
+        } catch (err) {
+            console.error('❌ VC参加エラー:', err);
+            message.reply('❌ VCに参加できませんでした');
+        }
+    }
+});
 
 // エラーハンドリング
 client.on('error', (error) => {
