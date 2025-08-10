@@ -4,7 +4,6 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
 import express from 'express';
-startVcBot(client);
 
 // .envファイルから環境変数を読み込み
 dotenv.config();
