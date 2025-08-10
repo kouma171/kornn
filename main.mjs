@@ -24,8 +24,6 @@ const SECRET_KEYWORD = "apple123"; // 合言葉
 const KORNN_WORD1 = 'とうもろこし';
 const ROLE_NAME = "異世界1"; // 付与するロール名
 const TARGET_CHANNEL_ID = "1327169018464960606"; // 対象チャンネルのID
-const FILE_PATH = path.join(__dirname, '栞葉.mp3');
-const timeFile = './times.json';
 
 // Discord Botクライアントを作成
 const client = new Client({
