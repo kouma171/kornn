@@ -12,7 +12,6 @@ import {
     AudioPlayerStatus
 } from '@discordjs/voice';
 
-import { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } from '@discordjs/voice';
 import { ChannelType } from 'discord.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
