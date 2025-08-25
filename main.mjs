@@ -10,6 +10,7 @@ import { join } from "path";
 import ytdl from '@distube/ytdl-core';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import play from 'play-dl';
 import fetch from 'node-fetch';
 
 // .envファイルから環境変数を読み込み
@@ -133,16 +134,26 @@ client.on('messageCreate', async (message) => {
       '776',
       '210\n奏の誕生日', 
       '430\n絵名の誕生日', 
-      '414\nみのりの誕生日'];
+      '414\nみのりの誕生日',
+      '1005\n遥の誕生日','1027\n穂波の誕生日','1105\nMEIKOの誕生日','1112\n彰人の誕生日',
+      '1206\n雫の誕生日','1227\nリン、レンの誕生日','108\n志歩の誕生日','130\nルカの誕生日',
+      '217\nKAITOの誕生日','302\nこはねの誕生日','319\n愛莉の誕生日','509\n咲希の誕生日',
+      '525\n冬弥の誕生日','624\n類の誕生日','720\n寧々の誕生日','726\n杏の誕生日',
+      '811\n一歌の誕生日','831\nミクの誕生日','909\nえむの誕生日',
+      '827\n瑞希の誕生日','127\nまふゆの誕生日',
+    ];
 
-    // 1/10の確率で当たり
-    const isWin = Math.floor(Math.random() * 319) === 0;
+    //確率で当たり
+    const isWin = Math.floor(Math.random() * 50) === 0;
+    const isWinner = Math.floor(Math.random() * 300) === 0;
 
-    if (isWin) {
-        await message.reply(`おめでとう！！！ **777** です！🎉`);
-    } else {
+    if (isWinner) {
+        await message.reply(`𝐂𝐨𝐧𝐠𝐫𝐚𝐭𝐮𝐥𝐚𝐭𝐢𝐨𝐧！！！ ***77777*** です！🎉🎉🎉`);
+    } else if(isWin){
+        await message.reply(`𝐂𝐨𝐧𝐠𝐫𝐚𝐭𝐮𝐥𝐚𝐭𝐢𝐨𝐧！！！ **777** です！🎉`);
+    }else{
         const miss = missNumbers[Math.floor(Math.random() * missNumbers.length)];
-        await message.reply(`残念\n**${miss}**`);
+        await message.reply(`**${miss}** です`);
     }
     }
 
@@ -297,17 +308,6 @@ if (message.content.startsWith('!yt')) {
   await message.reply(`🎵 VC「${vcName}」でYouTubeの音声を再生キューに追加しました`);
 
 }
-// トラック再生用関数
-function playTrack(url, queue) {
-  const stream = ytdl(url, {
-    filter: 'audioonly',
-    quality: 'highestaudio',
-    highWaterMark: 1 << 25
-  });
-  const resource = createAudioResource(stream);
-  queue.player.play(resource);
-  console.log(`▶️ 再生開始: ${url}`);
-}
 
 //コマンドチェック: "!skip"
 if (message.content.startsWith('!skip')) {
@@ -421,6 +421,17 @@ setInterval(async () => {
   }
 }, 1000); // 1秒ごとにチェック
 
+// トラック再生用関数
+function playTrack(url, queue) {
+  const stream = ytdl(url, {
+    filter: 'audioonly',
+    quality: 'highestaudio',
+    highWaterMark: 1 << 25
+  });
+  const resource = createAudioResource(stream);
+  queue.player.play(resource);
+  console.log(`▶️ 再生開始: ${url}`);
+}
 // ガチャ関数
 function gacha() {
   const rand = Math.random();
