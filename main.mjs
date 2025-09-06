@@ -30,10 +30,20 @@ const client = new Client({
 });
 
 // ===== 合言葉とロール名を設定 =====
-const SECRET_KEYWORD = "apple123"; // 合言葉
+const SECRET_KEYWORD1 = "apple1"; // 合言葉
+const SECRET_KEYWORD2 = "apple2"; // 合言葉
+const SECRET_KEYWORD3 = "apple3"; // 合言葉
+const SECRET_KEYWORD4 = "apple4"; // 合言葉
+const SECRET_KEYWORD5 = "apple5"; // 合言葉
+const SECRET_KEYWORD6 = "apple6"; // 合言葉
 const KORNN_WORD1 = 'とうもろこし';
-const ROLE_NAME = "異世界1"; // 付与するロール名
-const TARGET_CHANNEL_ID = "1327169018464960606"; // 対象チャンネルのID
+const ROLE_NAME1 = "birthday1"; // 付与するロール名
+const ROLE_NAME2 = "birthday2"; // 付与するロール名
+const ROLE_NAME3 = "birthday3"; // 付与するロール名
+const ROLE_NAME4 = "birthday4"; // 付与するロール名
+const ROLE_NAME5 = "birthday5"; // 付与するロール名
+const ROLE_NAME6 = "happybirthday!!"; // 付与するロール名
+const TARGET_CHANNEL_ID = "1409612262313824316"; // 対象チャンネルのID
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ALARM_FILE = path.resolve(__dirname, 'alarm.mp3') // 再生する音声ファイル
@@ -68,11 +78,12 @@ client.on('messageCreate', async (message) => {
     if (message.author.bot) return; // Bot自身は無視
 
     // ===== 合言葉判定 =====
-    if (message.content.trim() === SECRET_KEYWORD) {
+        if (message.channel.id === TARGET_CHANNEL_ID) {
+    if (message.content.trim() === SECRET_KEYWORD1) {
         const guild = message.guild;
-        const role = guild.roles.cache.find(r => r.name === ROLE_NAME);
+        const role1 = guild.roles.cache.find(r => r.name === ROLE_NAME1);
 
-        if (!role) {
+        if (!role1) {
             await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
             return;
         }
@@ -86,6 +97,99 @@ client.on('messageCreate', async (message) => {
             await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
         }
     }
+        if (message.content.trim() === SECRET_KEYWORD2) {
+        const guild = message.guild;
+        const role2 = guild.roles.cache.find(r => r.name === ROLE_NAME2);
+
+        if (!role2) {
+            await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
+            return;
+        }
+
+        try {
+            await message.member.roles.add(role);
+            await message.reply(`✅ ${ROLE_NAME} ロールを付与しました！`);
+            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME} を付与`);
+        } catch (err) {
+            console.error(`❌ ロール付与エラー:`, err);
+            await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
+        }
+    }
+        if (message.content.trim() === SECRET_KEYWORD3) {
+        const guild = message.guild;
+        const role3 = guild.roles.cache.find(r => r.name === ROLE_NAME3);
+
+
+        if (!role3) {
+            await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
+            return;
+        }
+
+        try {
+            await message.member.roles.add(role);
+            await message.reply(`✅ ${ROLE_NAME} ロールを付与しました！`);
+            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME} を付与`);
+        } catch (err) {
+            console.error(`❌ ロール付与エラー:`, err);
+            await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
+        }
+    }
+        if (message.content.trim() === SECRET_KEYWORD4) {
+        const guild = message.guild;
+        const role4 = guild.roles.cache.find(r => r.name === ROLE_NAME4);
+
+        if (!role4) {
+            await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
+            return;
+        }
+
+        try {
+            await message.member.roles.add(role);
+            await message.reply(`✅ ${ROLE_NAME} ロールを付与しました！`);
+            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME} を付与`);
+        } catch (err) {
+            console.error(`❌ ロール付与エラー:`, err);
+            await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
+        }
+    }
+        if (message.content.trim() === SECRET_KEYWORD5) {
+        const guild = message.guild;
+        const role5 = guild.roles.cache.find(r => r.name === ROLE_NAME5);
+
+
+        if (!role5) {
+            await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
+            return;
+        }
+
+        try {
+            await message.member.roles.add(role);
+            await message.reply(`✅ ${ROLE_NAME} ロールを付与しました！`);
+            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME} を付与`);
+        } catch (err) {
+            console.error(`❌ ロール付与エラー:`, err);
+            await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
+        }
+    }
+        if (message.content.trim() === SECRET_KEYWORD6) {
+        const guild = message.guild;
+        const role6 = guild.roles.cache.find(r => r.name === ROLE_NAME6);
+
+        if (!role6) {
+            await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
+            return;
+        }
+
+        try {
+            await message.member.roles.add(role);
+            await message.reply(`✅ ${ROLE_NAME} ロールを付与しました！`);
+            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME} を付与`);
+        } catch (err) {
+            console.error(`❌ ロール付与エラー:`, err);
+            await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
+        }
+    }
+  }
 
     //特定の言葉に反応
     if (message.content.toLowerCase() === KORNN_WORD1) {
