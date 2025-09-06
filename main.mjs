@@ -10,7 +10,9 @@ import { join } from "path";
 import ytdl from '@distube/ytdl-core';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import ytdl from 'ytdl-core';
 import play from 'play-dl';
+import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 
 // .envファイルから環境変数を読み込み
@@ -422,18 +424,21 @@ setInterval(async () => {
 }, 1000); // 1秒ごとにチェック
 
 // トラック再生用関数
-async function playTrack(url, player) {
-  try {
-    const stream = await play.stream(url);
-    const resource = createAudioResource(stream.stream, {
-      inputType: stream.type
-    });
+function playTrack(url, queue) {
+  const stream = ytdl(url, {
+    filter: 'audioonly',
+    quality: 'highestaudio',
+    highWaterMark: 1 << 25,
+    requestOptions: {
+      headers: {
+        cookie: process.env.YT_COOKIE
+      }
+    }
+  });
 
-    player.play(resource);
-    console.log(`▶️ 再生開始: ${url}`);
-  } catch (err) {
-    console.error("再生エラー:", err);
-  }
+  const resource = createAudioResource(stream);
+  queue.player.play(resource);
+  console.log(`▶️ 再生開始: ${url}`);
 }
 // ガチャ関数
 function gacha() {
