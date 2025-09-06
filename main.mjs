@@ -7,7 +7,10 @@ import express from 'express';
 import { joinVoiceChannel, VoiceConnectionStatus, StreamType,createAudioPlayer, createAudioResource, AudioPlayerStatus, NoSubscriberBehavior, entersState} from '@discordjs/voice';
 import path from 'path';
 import { join } from "path";
-import ytdl from '@distube/ytdl-core';
+const ytdl = require('ytdl-core');
+const ffmpeg = require('fluent-ffmpeg');
+const prism = require('prism-media');
+const { Readable } = require('stream');
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import fetch from 'node-fetch';
@@ -421,19 +424,38 @@ setInterval(async () => {
 }, 1000); // 1秒ごとにチェック
 
 // トラック再生用関数
-function playTrack(url, queue) {
+async function playTrack(url, queue) {
   try {
+    console.log(`▶️ 再生開始: ${url}`);
+
     const stream = ytdl(url, {
       filter: 'audioonly',
       quality: 'highestaudio',
       highWaterMark: 1 << 25
     });
 
-    const resource = createAudioResource(stream, { inputType: StreamType.Arbitrary });
+    // FFmpegでPCM変換
+    const ffmpegStream = new prism.FFmpeg({
+      args: [
+        '-analyzeduration', '0',
+        '-loglevel', '0',
+        '-f', 's16le',
+        '-ar', '48000',
+        '-ac', '2'
+      ]
+    });
+
+    const audioStream = stream.pipe(ffmpegStream);
+
+    const resource = createAudioResource(audioStream, {
+      inputType: StreamType.Raw,
+      inlineVolume: true
+    });
+
+    resource.volume.setVolume(0.8);
+
     queue.player.play(resource);
     queue.connection.subscribe(queue.player);
-
-    console.log(`▶️ 再生開始: ${url}`);
 
     queue.player.on(AudioPlayerStatus.Playing, () => {
       console.log('✅ 再生中...');
@@ -453,14 +475,11 @@ function playTrack(url, queue) {
       queue.connection.destroy();
     });
 
-    queue.connection.on('stateChange', (oldState, newState) => {
-      console.log(`🔄 Connection state: ${oldState.status} → ${newState.status}`);
-    });
-
   } catch (err) {
     console.error('❌ 再生エラー:', err);
   }
 }
+
 // ガチャ関数
 function gacha() {
   const rand = Math.random();
