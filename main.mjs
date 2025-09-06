@@ -10,9 +10,6 @@ import { join } from "path";
 import ytdl from '@distube/ytdl-core';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import ytdl from 'ytdl-core';
-import play from 'play-dl';
-import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 
 // .envファイルから環境変数を読み込み
