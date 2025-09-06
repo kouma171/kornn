@@ -35,8 +35,6 @@ const TARGET_CHANNEL_ID = "1327169018464960606"; // 対象チャンネルのID
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ALARM_FILE = path.resolve(__dirname, 'alarm.mp3') // 再生する音声ファイル
-const play = require('play-dl');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, VoiceConnectionStatus, entersState } = require('@discordjs/voice');
 
 // アラームのスケジュール格納用
 let alarms = [];
