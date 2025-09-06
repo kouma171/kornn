@@ -434,47 +434,31 @@ async function playTrack(url, queue) {
       highWaterMark: 1 << 25
     });
 
-    // FFmpegでPCM変換
-    const ffmpegStream = new prism.FFmpeg({
-      args: [
-        '-analyzeduration', '0',
-        '-loglevel', '0',
-        '-f', 's16le',
-        '-ar', '48000',
-        '-ac', '2'
-      ]
+    const resource = createAudioResource(stream, {
+      inputType: StreamType.Arbitrary
     });
-
-    const audioStream = stream.pipe(ffmpegStream);
-
-    const resource = createAudioResource(audioStream, {
-      inputType: StreamType.Raw,
-      inlineVolume: true
-    });
-
-    resource.volume.setVolume(0.8);
 
     queue.player.play(resource);
-    queue.connection.subscribe(queue.player);
 
     queue.player.on(AudioPlayerStatus.Playing, () => {
       console.log('✅ 再生中...');
     });
 
     queue.player.on(AudioPlayerStatus.Idle, () => {
-  console.log('✅ 再生終了 → 次の曲を再生するか接続を終了');
-  if (queue.tracks.length > 0) {
-    playTrack(queue.tracks.shift(), queue);
-  } else {
-    if (queue.connection && queue.connection.state.status !== VoiceConnectionStatus.Destroyed) {
-      queue.connection.destroy();
-    }
-  }
-});
+      console.log('✅ 再生終了 → 次の曲を再生するか接続を終了');
+      if (queue.tracks.length > 0) {
+        playTrack(queue.tracks.shift(), queue);
+      } else {
+        setTimeout(() => {
+          if (queue.connection && queue.connection.state.status !== VoiceConnectionStatus.Destroyed) {
+            queue.connection.destroy();
+          }
+        }, 5000);
+      }
+    });
 
     queue.player.on('error', (error) => {
       console.error('❌ AudioPlayer エラー:', error);
-      queue.connection.destroy();
     });
 
   } catch (err) {
