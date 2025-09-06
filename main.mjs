@@ -422,20 +422,44 @@ setInterval(async () => {
 
 // トラック再生用関数
 function playTrack(url, queue) {
-  const stream = ytdl(url, {
-    filter: 'audioonly',
-    quality: 'highestaudio',
-    highWaterMark: 1 << 25,
-    requestOptions: {
-      headers: {
-        cookie: process.env.YT_COOKIE
-      }
-    }
-  });
+  try {
+    const stream = ytdl(url, {
+      filter: 'audioonly',
+      quality: 'highestaudio',
+      highWaterMark: 1 << 25
+    });
 
-  const resource = createAudioResource(stream);
-  queue.player.play(resource);
-  console.log(`▶️ 再生開始: ${url}`);
+    const resource = createAudioResource(stream, { inputType: StreamType.Arbitrary });
+    queue.player.play(resource);
+    queue.connection.subscribe(queue.player);
+
+    console.log(`▶️ 再生開始: ${url}`);
+
+    queue.player.on(AudioPlayerStatus.Playing, () => {
+      console.log('✅ 再生中...');
+    });
+
+    queue.player.on(AudioPlayerStatus.Idle, () => {
+      console.log('✅ 再生終了 → 次の曲を再生するか接続を終了');
+      if (queue.tracks.length > 0) {
+        playTrack(queue.tracks.shift(), queue);
+      } else {
+        queue.connection.destroy();
+      }
+    });
+
+    queue.player.on('error', (error) => {
+      console.error('❌ AudioPlayer エラー:', error);
+      queue.connection.destroy();
+    });
+
+    queue.connection.on('stateChange', (oldState, newState) => {
+      console.log(`🔄 Connection state: ${oldState.status} → ${newState.status}`);
+    });
+
+  } catch (err) {
+    console.error('❌ 再生エラー:', err);
+  }
 }
 // ガチャ関数
 function gacha() {
