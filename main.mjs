@@ -462,13 +462,15 @@ async function playTrack(url, queue) {
     });
 
     queue.player.on(AudioPlayerStatus.Idle, () => {
-      console.log('✅ 再生終了 → 次の曲を再生するか接続を終了');
-      if (queue.tracks.length > 0) {
-        playTrack(queue.tracks.shift(), queue);
-      } else {
-        queue.connection.destroy();
-      }
-    });
+  console.log('✅ 再生終了 → 次の曲を再生するか接続を終了');
+  if (queue.tracks.length > 0) {
+    playTrack(queue.tracks.shift(), queue);
+  } else {
+    if (queue.connection && queue.connection.state.status !== VoiceConnectionStatus.Destroyed) {
+      queue.connection.destroy();
+    }
+  }
+});
 
     queue.player.on('error', (error) => {
       console.error('❌ AudioPlayer エラー:', error);
