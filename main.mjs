@@ -1,7 +1,7 @@
 // main.mjs - Discord Botのメインプログラム
 
 // 必要なライブラリを読み込み
-import { Client, GatewayIntentBits, ChannelType } from 'discord.js';
+import { Client, GatewayIntentBits, ChannelType} from 'discord.js';
 import dotenv from 'dotenv';
 import express from 'express';
 import { joinVoiceChannel, VoiceConnectionStatus, StreamType,createAudioPlayer, createAudioResource, AudioPlayerStatus, NoSubscriberBehavior, entersState} from '@discordjs/voice';
@@ -71,66 +71,6 @@ const rarityRates = {
 client.once('ready', async () => {
     console.log(`🎉 ${client.user.tag} が正常に起動しました！`);
     console.log(`📊 ${client.guilds.cache.size} つのサーバーに参加中`);
-    registerCommands();
-});
-
-// ✅ スラッシュコマンド定義
-const commands = [
-  new SlashCommandBuilder()
-    .setName('secret')
-    .setDescription('シークレットコードでロールを付与します')
-    .addStringOption(option =>
-      option.setName('code')
-        .setDescription('シークレットコードを入力してください')
-        .setRequired(true)
-    )
-    .toJSON()
-];
-
-// ✅ コマンドをDiscordに登録
-const rest = new REST({ version: '10' }).setToken(TOKEN);
-
-async function registerCommands() {
-  try {
-    console.log('🔄 スラッシュコマンド登録中...');
-    await rest.put(
-      Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), // ギルド専用登録
-      { body: commands }
-    );
-    console.log('✅ スラッシュコマンド登録完了！');
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// ✅ コマンド実行処理
-client.on('interactionCreate', async (interaction) => {
-  if (!interaction.isChatInputCommand()) return;
-
-  if (interaction.commandName === 'secret') {
-    const code = interaction.options.getString('code');
-    const ROLE_NAME = 'VIP'; // 付与するロール名
-    const SECRET_KEY = 'pass123'; // 正解のコード
-
-    if (code === SECRET_KEY) {
-      const role = interaction.guild.roles.cache.find(r => r.name === ROLE_NAME);
-
-      if (!role) {
-        return interaction.reply({ content: `❌ ロール "${ROLE_NAME}" が見つかりません。`, ephemeral: true });
-      }
-
-      try {
-        await interaction.member.roles.add(role);
-        await interaction.reply({ content: `✅ 正解！${ROLE_NAME} ロールを付与しました！`, ephemeral: true });
-        console.log(`🔑 ${interaction.user.tag} にロール "${ROLE_NAME}" を付与`);
-      } catch (err) {
-        console.error('❌ ロール付与エラー:', err);
-        await interaction.reply({ content: '⚠️ ロールを付与できませんでした。Botの権限を確認してください。', ephemeral: true });
-      }
-    } else {
-      await interaction.reply({ content: '❌ コードが間違っています。', ephemeral: true });
-    }
-  }
 });
 
 // メッセージが送信されたとき
@@ -262,7 +202,7 @@ client.on('messageCreate', async (message) => {
          }
     }
 
-    // 指定チャンネルでのみ削除
+     指定チャンネルでのみ削除
     if (message.channel.id === TARGET_CHANNEL_ID) {
     try {
       await message.delete();

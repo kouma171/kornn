@@ -3,3 +3,6 @@ git add .
 git commit -m "?? Discord Botの基本機能を実装"
 
 git push origin main
+
+ローカルで動かす時
+node main.mjs
