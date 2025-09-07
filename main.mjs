@@ -78,7 +78,7 @@ client.on('messageCreate', async (message) => {
     if (message.author.bot) return; // Bot自身は無視
 
     // ===== 合言葉判定 =====
-    if (message.content.trim() === SECRET_KEYWORD1&&message.channel.id === TARGET_CHANNEL_ID) {
+    if (message.content.trim() === SECRET_KEYWORD1) {
         const guild = message.guild;
         const role1 = guild.roles.cache.find(r => r.name === ROLE_NAME1);
 
