@@ -101,14 +101,14 @@ client.on('messageCreate', async (message) => {
         const role2 = guild.roles.cache.find(r => r.name === ROLE_NAME2);
 
         if (!role2) {
-            await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
+            await message.reply(`❌ ロール "${ROLE_NAME2}" が見つかりません。管理者に連絡してください。`);
             return;
         }
 
         try {
-            await message.member.roles.add(role);
-            await message.reply(`✅ ${ROLE_NAME} ロールを付与しました！`);
-            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME} を付与`);
+            await message.member.roles.add(role2);
+            await message.reply(`✅ ${ROLE_NAME2} ロールを付与しました！`);
+            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME2} を付与`);
         } catch (err) {
             console.error(`❌ ロール付与エラー:`, err);
             await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
@@ -120,14 +120,14 @@ client.on('messageCreate', async (message) => {
 
 
         if (!role3) {
-            await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
+            await message.reply(`❌ ロール "${ROLE_NAME3}" が見つかりません。管理者に連絡してください。`);
             return;
         }
 
         try {
-            await message.member.roles.add(role);
-            await message.reply(`✅ ${ROLE_NAME} ロールを付与しました！`);
-            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME} を付与`);
+            await message.member.roles.add(role3);
+            await message.reply(`✅ ${ROLE_NAME3} ロールを付与しました！`);
+            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME3} を付与`);
         } catch (err) {
             console.error(`❌ ロール付与エラー:`, err);
             await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
@@ -138,14 +138,14 @@ client.on('messageCreate', async (message) => {
         const role4 = guild.roles.cache.find(r => r.name === ROLE_NAME4);
 
         if (!role4) {
-            await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
+            await message.reply(`❌ ロール "${ROLE_NAME4}" が見つかりません。管理者に連絡してください。`);
             return;
         }
 
         try {
-            await message.member.roles.add(role);
-            await message.reply(`✅ ${ROLE_NAME} ロールを付与しました！`);
-            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME} を付与`);
+            await message.member.roles.add(role4);
+            await message.reply(`✅ ${ROLE_NAME4} ロールを付与しました！`);
+            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME4} を付与`);
         } catch (err) {
             console.error(`❌ ロール付与エラー:`, err);
             await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
@@ -157,14 +157,14 @@ client.on('messageCreate', async (message) => {
 
 
         if (!role5) {
-            await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
+            await message.reply(`❌ ロール "${ROLE_NAME5}" が見つかりません。管理者に連絡してください。`);
             return;
         }
 
         try {
-            await message.member.roles.add(role);
-            await message.reply(`✅ ${ROLE_NAME} ロールを付与しました！`);
-            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME} を付与`);
+            await message.member.roles.add(role5);
+            await message.reply(`✅ ${ROLE_NAME5} ロールを付与しました！`);
+            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME5} を付与`);
         } catch (err) {
             console.error(`❌ ロール付与エラー:`, err);
             await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
@@ -175,14 +175,14 @@ client.on('messageCreate', async (message) => {
         const role6 = guild.roles.cache.find(r => r.name === ROLE_NAME6);
 
         if (!role6) {
-            await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
+            await message.reply(`❌ ロール "${ROLE_NAME6}" が見つかりません。管理者に連絡してください。`);
             return;
         }
 
         try {
-            await message.member.roles.add(role);
-            await message.reply(`✅ ${ROLE_NAME} ロールを付与しました！`);
-            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME} を付与`);
+            await message.member.roles.add(role6);
+            await message.reply(`✅ ${ROLE_NAME6} ロールを付与しました！`);
+            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME6} を付与`);
         } catch (err) {
             console.error(`❌ ロール付与エラー:`, err);
             await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
