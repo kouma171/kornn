@@ -75,6 +75,18 @@ client.once('ready', async () => {
 
 // メッセージが送信されたとき
 client.on('messageCreate', async (message) => {
+      // 指定チャンネルでのみ削除
+    if (message.channel.id === TARGET_CHANNEL_ID) {
+    try {
+      await message.delete();
+    } catch (err) {
+      console.error("メッセージ削除失敗:", err);
+    }
+    }
+});
+
+// メッセージが送信されたとき
+client.on('messageCreate', async (message) => {
     if (message.author.bot) return; // Bot自身は無視
 
     // ===== 合言葉判定 =====
