@@ -83,14 +83,14 @@ client.on('messageCreate', async (message) => {
         const role1 = guild.roles.cache.find(r => r.name === ROLE_NAME1);
 
         if (!role1) {
-            await message.reply(`❌ ロール "${ROLE_NAME}" が見つかりません。管理者に連絡してください。`);
+            await message.reply(`❌ ロール "${ROLE_NAME1}" が見つかりません。管理者に連絡してください。`);
             return;
         }
-
+        
         try {
             await message.member.roles.add(role1);
-            await message.reply(`✅ ${ROLE_NAME} ロールを付与しました！`);
-            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME} を付与`);
+            await message.reply(`✅ ${ROLE_NAME1} ロールを付与しました！`);
+            console.log(`🔑 ${message.author.tag} に ${ROLE_NAME1} を付与`);
         } catch (err) {
             console.error(`❌ ロール付与エラー:`, err);
             await message.reply(`⚠️ ロールを付与できませんでした。Botの権限を確認してください。`);
