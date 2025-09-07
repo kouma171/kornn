@@ -88,7 +88,7 @@ client.on('messageCreate', async (message) => {
         }
 
         try {
-            await message.member.roles.add(role);
+            await message.member.roles.add(role1);
             await message.reply(`✅ ${ROLE_NAME} ロールを付与しました！`);
             console.log(`🔑 ${message.author.tag} に ${ROLE_NAME} を付与`);
         } catch (err) {
