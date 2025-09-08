@@ -202,7 +202,7 @@ client.on('messageCreate', async (message) => {
          }
     }
 
-     指定チャンネルでのみ削除
+    //指定チャンネルでのみ削除
     if (message.channel.id === TARGET_CHANNEL_ID) {
     try {
       await message.delete();
