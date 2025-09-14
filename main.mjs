@@ -7,8 +7,7 @@ import express from 'express';
 import { joinVoiceChannel, VoiceConnectionStatus, StreamType,createAudioPlayer, createAudioResource, AudioPlayerStatus, NoSubscriberBehavior, entersState} from '@discordjs/voice';
 import path from 'path';
 import { join } from "path";
-import ytdl from 'ytdl-core';
-import play from "play-dl";
+import ytdl from "@distube/ytdl-core";
 import ffmpeg from 'fluent-ffmpeg';
 import prism from 'prism-media';
 import { Readable } from 'stream';
@@ -458,49 +457,53 @@ if (message.content.startsWith('!stop')) {
     await message.reply(`10連ガチャ結果:\n${reply}`);
   }
 
-  if (message.content.startsWith(`!test`)) {
-    const args = message.content.split(" ");
-    const url = args[1];
-    if (!url) {
-      message.reply("⚠️ 再生したい YouTube の URL を入力してください！");
-      return;
-    }
-
-    const voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) {
-      message.reply("⚠️ ボイスチャンネルに参加してください！");
-      return;
-    }
-
-    try {
-      // 接続
-      const connection = joinVoiceChannel({
-        channelId: voiceChannel.id,
-        guildId: message.guild.id,
-        adapterCreator: message.guild.voiceAdapterCreator,
-      });
-
-      // YouTube 音源を取得
-      const stream = await play.stream(url);
-      const resource = createAudioResource(stream.stream, {
-        inputType: stream.type,
-      });
-
-      const player = createAudioPlayer();
-      player.play(resource);
-      connection.subscribe(player);
-
-      message.reply(`▶️ 再生開始: ${url}`);
-
-      player.on(AudioPlayerStatus.Idle, () => {
-        connection.destroy();
-        message.channel.send("⏹️ 再生終了。");
-      });
-    } catch (err) {
-      console.error(err);
-      message.reply("❌ 再生中にエラーが発生しました。");
-    }
+if (message.content.startsWith("!est")) {
+  const args = message.content.split(" ");
+  const url = args[1];
+  if (!url) {
+    message.reply("⚠️ 再生したい YouTube の URL を入力してください！");
+    return;
   }
+
+  const voiceChannel = message.member.voice.channel;
+  if (!voiceChannel) {
+    message.reply("⚠️ ボイスチャンネルに参加してください！");
+    return;
+  }
+
+  try {
+    // 接続
+    const connection = joinVoiceChannel({
+      channelId: voiceChannel.id,
+      guildId: message.guild.id,
+      adapterCreator: message.guild.voiceAdapterCreator,
+    });
+
+    // YouTube 音源を取得 (ytdl-core)
+    const stream = ytdl(url, {
+      filter: "audioonly",
+      quality: "highestaudio",
+      highWaterMark: 1 << 25, // バッファ拡張で安定化
+    });
+
+    const resource = createAudioResource(stream, { inlineVolume: true });
+    resource.volume.setVolume(0.5); // 音量50%
+
+    const player = createAudioPlayer();
+    player.play(resource);
+    connection.subscribe(player);
+
+    message.reply(`▶️ 再生開始: ${url}`);
+
+    player.on(AudioPlayerStatus.Idle, () => {
+      connection.destroy();
+      message.channel.send("⏹️ 再生終了。");
+    });
+  } catch (err) {
+    console.error(err);
+    message.reply("❌ 再生中にエラーが発生しました。");
+  }
+}
 
 });
 
