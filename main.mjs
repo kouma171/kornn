@@ -8,6 +8,7 @@ import { joinVoiceChannel, VoiceConnectionStatus, StreamType,createAudioPlayer, 
 import path from 'path';
 import { join } from "path";
 import ytdl from 'ytdl-core';
+import play from "play-dl";
 import ffmpeg from 'fluent-ffmpeg';
 import prism from 'prism-media';
 import { Readable } from 'stream';
@@ -89,7 +90,6 @@ client.on('messageCreate', async (message) => {
         
         try {
             await message.member.roles.add(role1);
-            await message.reply(`正解です✨${message.author.tag}に${ROLE_NAME1} ロールを付与しました！`);
             console.log(`🔑 ${message.author.tag} に ${ROLE_NAME1} を付与`);
         } catch (err) {
             console.error(`❌ ロール付与エラー:`, err);
@@ -107,7 +107,6 @@ client.on('messageCreate', async (message) => {
 
         try {
             await message.member.roles.add(role2);
-            await message.reply(`正解です✨${message.author.tag}に${ROLE_NAME2} ロールを付与しました！`);
             console.log(`🔑 ${message.author.tag} に ${ROLE_NAME2} を付与`);
         } catch (err) {
             console.error(`❌ ロール付与エラー:`, err);
@@ -126,7 +125,6 @@ client.on('messageCreate', async (message) => {
 
         try {
             await message.member.roles.add(role3);
-            await message.reply(`正解です✨${message.author.tag}に${ROLE_NAME3} ロールを付与しました！`);
             console.log(`🔑 ${message.author.tag} に ${ROLE_NAME3} を付与`);
         } catch (err) {
             console.error(`❌ ロール付与エラー:`, err);
@@ -144,7 +142,6 @@ client.on('messageCreate', async (message) => {
 
         try {
             await message.member.roles.add(role4);
-            await message.reply(`正解です✨${message.author.tag}に${ROLE_NAME4} ロールを付与しました！`);
             console.log(`🔑 ${message.author.tag} に ${ROLE_NAME4} を付与`);
         } catch (err) {
             console.error(`❌ ロール付与エラー:`, err);
@@ -163,7 +160,6 @@ client.on('messageCreate', async (message) => {
 
         try {
             await message.member.roles.add(role5);
-            await message.reply(`正解です✨${message.author.tag}に${ROLE_NAME5} ロールを付与しました！`);
             console.log(`🔑 ${message.author.tag} に ${ROLE_NAME5} を付与`);
         } catch (err) {
             console.error(`❌ ロール付与エラー:`, err);
@@ -181,7 +177,6 @@ client.on('messageCreate', async (message) => {
 
         try {
             await message.member.roles.add(role6);
-            await message.reply(`正解です✨${message.author.tag}に${ROLE_NAME6} ロールを付与しました！`);
             console.log(`🔑 ${message.author.tag} に ${ROLE_NAME6} を付与`);
         } catch (err) {
             console.error(`❌ ロール付与エラー:`, err);
@@ -231,11 +226,6 @@ client.on('messageCreate', async (message) => {
     if (message.content.toLowerCase().startsWith('!slot')) {
     // 外れパターンの数字リスト（777以外）
     const missNumbers = [
-      '775', 
-      '779', 
-      '770', 
-      '778', 
-      '776',
       '210\n奏の誕生日', 
       '430\n絵名の誕生日', 
       '414\nみのりの誕生日',
@@ -466,6 +456,50 @@ if (message.content.startsWith('!stop')) {
     .map((c, index) => `${index + 1}. [${c.prefix}]${c.name} (${c.rarity})`)
     .join('\n');
     await message.reply(`10連ガチャ結果:\n${reply}`);
+  }
+
+  if (message.content.startsWith(`!test`)) {
+    const args = message.content.split(" ");
+    const url = args[1];
+    if (!url) {
+      message.reply("⚠️ 再生したい YouTube の URL を入力してください！");
+      return;
+    }
+
+    const voiceChannel = message.member.voice.channel;
+    if (!voiceChannel) {
+      message.reply("⚠️ ボイスチャンネルに参加してください！");
+      return;
+    }
+
+    try {
+      // 接続
+      const connection = joinVoiceChannel({
+        channelId: voiceChannel.id,
+        guildId: message.guild.id,
+        adapterCreator: message.guild.voiceAdapterCreator,
+      });
+
+      // YouTube 音源を取得
+      const stream = await play.stream(url);
+      const resource = createAudioResource(stream.stream, {
+        inputType: stream.type,
+      });
+
+      const player = createAudioPlayer();
+      player.play(resource);
+      connection.subscribe(player);
+
+      message.reply(`▶️ 再生開始: ${url}`);
+
+      player.on(AudioPlayerStatus.Idle, () => {
+        connection.destroy();
+        message.channel.send("⏹️ 再生終了。");
+      });
+    } catch (err) {
+      console.error(err);
+      message.reply("❌ 再生中にエラーが発生しました。");
+    }
   }
 
 });
