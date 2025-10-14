@@ -243,15 +243,6 @@ client.on('messageCreate', async (message) => {
          }
     }
 
-    //指定チャンネルでのみ削除
-    if (message.channel.id === TARGET_CHANNEL_ID) {
-    try {
-      await message.delete();
-    } catch (err) {
-      console.error("メッセージ削除失敗:", err);
-    }
-    }
-
     // コマンドチェック: "!roulette"
     if (message.content.toLowerCase().startsWith('!roulette')) {
         // スペースで区切って配列化（最初はコマンドなので除く）
