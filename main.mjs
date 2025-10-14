@@ -276,7 +276,7 @@ client.on('messageCreate', async (message) => {
 
     //確率で当たり
     const isWin = Math.floor(Math.random() * 50) === 0;
-    const isWinner = Math.floor(Math.random() * 300) === 0;
+    const isWinner = Math.floor(Math.random() * 319) === 0;
 
     if (isWinner) {
         await message.reply(`𝐂𝐨𝐧𝐠𝐫𝐚𝐭𝐮𝐥𝐚𝐭𝐢𝐨𝐧！！！ ***77777*** です！🎉🎉🎉`);
