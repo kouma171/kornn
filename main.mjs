@@ -30,7 +30,7 @@ const client = new Client({
 });
 
 // ===== 合言葉とロール名を設定 =====
-const SECRET_KEYWORD1 = "桃井愛莉"; // 合言葉
+const SECRET_KEYWORD1 = "桐谷遥"; // 合言葉
 const SECRET_KEYWORD2 = "162"; // 合言葉
 const SECRET_KEYWORD3 = "こはね"; // 合言葉
 const SECRET_KEYWORD4 = "F"; // 合言葉
